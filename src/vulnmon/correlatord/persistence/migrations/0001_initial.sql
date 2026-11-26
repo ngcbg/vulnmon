@@ -1,4 +1,5 @@
-BEGIN IMMEDIATE;
+-- v1 schema (originally schema.sql). The runner wraps each migration in one
+-- transaction and sets user_version; migrations must not contain BEGIN/COMMIT.
 CREATE TABLE IF NOT EXISTS metadata (
     key TEXT PRIMARY KEY,
     value INTEGER NOT NULL
@@ -93,5 +94,3 @@ CREATE TABLE IF NOT EXISTS outbox (
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(finding_id, epoch, event_type)
 );
-PRAGMA user_version = 1;
-COMMIT;
