@@ -1,0 +1,41 @@
+name: Prototype tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+
+permissions:
+  contents: read
+
+jobs:
+  unittest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Runtime versions
+        run: |
+          python3 --version
+          python3 -c 'import sqlite3; print(sqlite3.sqlite_version)'
+          dpkg --version
+      - name: Unit and integration tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Offline CLI smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp=$(mktemp -d)
+          trap 'rm -rf "$tmp"' EXIT
+          python3 -m vulnmon.cli --db "$tmp/state.db" init
+          python3 -m vulnmon.cli --db "$tmp/state.db" ingest-inventory tests/fixtures/inventory.json
+          python3 -m vulnmon.cli --db "$tmp/state.db" ingest-advisory tests/fixtures/advisory.json
+          python3 -m vulnmon.cli --db "$tmp/state.db" correlate --max-batches 10
+          python3 -m vulnmon.cli --db "$tmp/state.db" findings
+          python3 -m vulnmon.cli --db "$tmp/state.db" events
