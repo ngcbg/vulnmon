@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Inventory snapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "producer",
+    "scope",
+    "snapshot_id",
+    "revision",
+    "observed_at",
+    "complete",
+    "components"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "producer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asset_id",
+          "component_id",
+          "ecosystem",
+          "name",
+          "version",
+          "origin",
+          "os_release",
+          "architecture",
+          "exposure"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "component_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "ecosystem": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "origin": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "os_release": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "architecture": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "exposure": {
+            "enum": [
+              "edge",
+              "internal",
+              "build-only",
+              "unknown"
+            ]
+          },
+          "source_package": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        }
+      }
+    }
+  }
+}

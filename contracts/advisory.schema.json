@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Normalized advisory v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source",
+    "advisory_id",
+    "vulnerability_id",
+    "revision",
+    "observed_at",
+    "ecosystem",
+    "package",
+    "origin",
+    "os_release",
+    "architecture",
+    "status",
+    "fixed_version",
+    "affected_from",
+    "impact",
+    "authentication_required",
+    "known_exploited"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "advisory_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "vulnerability_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ecosystem": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "package": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "origin": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "os_release": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "architecture": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "status": {
+      "enum": [
+        "affected",
+        "not_affected",
+        "unknown"
+      ]
+    },
+    "fixed_version": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "affected_from": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "impact": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "authentication_required": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "known_exploited": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "not_affected",
+              "unknown"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "fixed_version": {
+            "type": "null"
+          },
+          "affected_from": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}
