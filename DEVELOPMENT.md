@@ -1,6 +1,6 @@
 # Development baseline — first vertical slice
 
-Architecture baseline: [v0.2](ARCHITECTURE.md). This is an offline fixture prototype, not a monitoring service or a release. No real alerts, network access, LLM calls or production inventory collection occur.
+Implementation baseline: [architecture v0.2](https://github.com/ngcbg/vulnmon/blob/41aa16d0aa3b54e92bbcb985f772424c30bfb3bf/ARCHITECTURE.md). The current [architecture v0.3](ARCHITECTURE.md) is a proposed revision; this prototype has not yet been reconciled with its requirements. This is an offline fixture prototype, not a monitoring service or a release. No real alerts, network access, LLM calls or production inventory collection occur.
 
 ## Run from a checkout
 
