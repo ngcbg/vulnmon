@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spool manifest envelope v1",
+  "description": "Wire shape only. Runtime validation (vulnmon.common.spool.validate_manifest) additionally verifies content_sha256 = SHA-256 of the canonical payload JSON, the entry file name, and consumer-configured kinds/producers. A manifest field is not authentication.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "message_id", "kind", "producer", "created_at", "content_sha256", "payload"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "message_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "kind": {"type": "string", "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"},
+    "producer": {"type": "string", "minLength": 1, "maxLength": 512},
+    "created_at": {"type": "string", "format": "date-time"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "payload": {"type": "object"}
+  }
+}

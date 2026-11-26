@@ -52,6 +52,21 @@ All CLI commands take the exclusive local lock, including reads. This is a delib
 - Every accepted material input increments the global revision and enqueues reconciliation atomically. The offline worker processes the newest revision in bounded keyset pages; obsolete pending jobs are marked superseded. Stale findings remain visible, never silently disappear or become verified closed. Removal/disposition, selective matching, retention and source precedence are deferred.
 - Decisions and outbox events commit with finding updates; an interrupted batch rolls back with its cursor. The outbox is append-only until delivery semantics are designed. No claim of exactly-once external delivery.
 
+## Spool protocol (v0.3 reconciliation, step 1)
+
+`vulnmon.common.spool` implements the durable filesystem hand-off of architecture v0.3 §9.3. The exact behaviour is specified in [contracts/protocol.md](contracts/protocol.md) and the envelope in [contracts/manifest.schema.json](contracts/manifest.schema.json). It covers:
+
+- no-clobber publication with file and directory sync;
+- idempotent retries;
+- bounded strict reading that rejects symlinks;
+- acknowledgement only after commit;
+- bounded quarantine;
+- advisory quotas with an urgent reserve.
+
+`tests/test_spool.py` injects crashes and `ENOSPC` at every protocol step. The delivery receipt payload contract is `vulnmon.common.receipts` ([contracts/receipt.schema.json](contracts/receipt.schema.json)).
+
+Nothing uses the library yet. The CLI still ingests files given as arguments. Connecting the core to spools comes in later steps: the per-batch lock and migrations, then the job model and spool intake, then delivery export and receipts.
+
 ## Next increment
 
 Implement an authenticated local core service, bounded priority-aware scheduler and separate read-only query path; then incremental correlation, immutable raw evidence and production Ubuntu adapters. Add finding and event contracts, migrations, durable notification leases/retries, independent health checks and point-in-time replay before live alerting. Run fault-injection and representative storage/load tests on the target VM.
