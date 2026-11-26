@@ -8,7 +8,7 @@ Vulnmon is a Python-first project for continuously correlating an organization's
 
 ## Project status
 
-**Early design stage — architecture v0.2.** The architecture is documented; the application is not yet implemented. There is no installable release or production-readiness claim.
+**Early design stage — architecture v0.2.** The architecture is documented. An offline fixture-driven core prototype is under development; live monitoring and delivery are not implemented. There is no production-readiness claim.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the authoritative design, revision history, component relationships, persistence requirements and implementation roadmap.
 
@@ -59,6 +59,10 @@ The initial target is Ubuntu Server, including guests hosted on Proxmox. The pro
 ## Scope
 
 Vulnmon consumes inventory supplied by an external producer. Inventory generation, discovery tooling and collection transport are separate prerequisites, not part of the initial application. The project is not an autonomous patching system, endpoint detection product or incident investigation platform.
+
+## Developer quick start
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for fixture ingestion, bounded reconciliation, inspecting findings/outbox events, test commands and explicit limitations of the first implementation.
 
 ## Implementation roadmap
 

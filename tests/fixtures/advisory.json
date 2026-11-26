@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "source": "ubuntu-fixture",
+  "advisory_id": "DEMO-ADVISORY-1",
+  "vulnerability_id": "DEMO-VULN-1",
+  "revision": 1,
+  "observed_at": "2026-11-26T08:05:00Z",
+  "ecosystem": "deb",
+  "package": "example-runtime",
+  "origin": "ubuntu",
+  "os_release": "24.04",
+  "architecture": "all",
+  "status": "affected",
+  "fixed_version": "1:1.0-1ubuntu2",
+  "affected_from": null,
+  "impact": "remote_code_execution",
+  "authentication_required": false,
+  "known_exploited": false
+}
