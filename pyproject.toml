@@ -16,4 +16,4 @@ vulnctl = "vulnmon.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-"vulnmon.correlatord.persistence" = ["schema.sql"]
+"vulnmon.correlatord.persistence" = ["migrations/*.sql"]

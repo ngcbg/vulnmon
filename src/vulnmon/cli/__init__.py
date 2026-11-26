@@ -33,20 +33,22 @@ def main(argv=None):
         ):
             raise ValueError("invalid pagination")
         payload = load(args.path) if args.command.startswith("ingest-") else None
-        with Store(args.db) as store:
-            core = Core(store)
-            if args.command == "ingest-inventory":
-                result = core.ingest_inventory(payload)
-            elif args.command == "ingest-advisory":
-                result = core.ingest_advisory(payload)
-            elif args.command == "correlate":
-                result = core.correlate(args.batch_size, args.max_batches)
-            elif args.command == "findings":
-                result = store.findings(args.after, args.limit)
-            elif args.command == "events":
-                result = store.events(args.after, args.limit)
-            else:
-                result = store.status()
+        store = Store(args.db)
+        core = Core(store)
+        if args.command == "init":
+            result = store.migrate()
+        elif args.command == "ingest-inventory":
+            result = core.ingest_inventory(payload)
+        elif args.command == "ingest-advisory":
+            result = core.ingest_advisory(payload)
+        elif args.command == "correlate":
+            result = core.correlate(args.batch_size, args.max_batches)
+        elif args.command == "findings":
+            result = store.findings(args.after, args.limit)
+        elif args.command == "events":
+            result = store.events(args.after, args.limit)
+        else:
+            result = store.status()
         print(json.dumps(result, indent=2, ensure_ascii=True))
         return 0
     except (OSError, ValueError, RuntimeError, sqlite3.Error) as exc:

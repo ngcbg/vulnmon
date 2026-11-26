@@ -33,13 +33,15 @@ The synthetic fixture describes an affected fictional Ubuntu package with a prov
 
 | Requirement | First slice | Deferred |
 |---|---|---|
-| DB-01 | Exclusive advisory process lock and core-owned connection | Long-running sole writer with authenticated UNIX IPC and read-only query connections |
-| DB-02 | 500-row staging batches, bounded reconciliation calls, compute outside write transactions | Priority scheduler, urgent admission, fairness/backpressure and latency instrumentation |
-| DB-03 | Snapshot generations, atomic activation + durable job, revision checks, interrupted staging retry | Delta protocol, authoritative coverage validation, incremental jobs and new-exposure assessment while staging |
+| DB-01 | Exclusive advisory lock held for one bounded unit of work (fresh connection per unit, bounded lock wait) | Core UID and command spool; reads move to exported snapshots |
+| DB-02 | 500-row staging batches and correlation batches each in their own lock unit; evaluation runs with no lock held; stale batches discarded via epoch + job cursor check | Priority scheduler, urgent admission, fairness/backpressure and latency instrumentation |
+| DB-03 | Snapshot generations, atomic activation + durable job, revision checks (activation refused if a newer revision activated during staging), interrupted staging retry | Delta protocol, authoritative coverage validation, incremental jobs and new-exposure assessment while staging |
 | DB-04 | WAL/FULL, foreign keys, timeout, paginated output | Concurrent bounded read-only transactions, checkpoint metrics, independent watchdog, backup/restore |
-| DB-05 | Explicit domain persistence interface and packaged SQL | Schema migrations beyond v1 and alternative backend |
+| DB-05 | Explicit domain persistence interface; ordered transactional migrations applied only by `init` | Alternative backend |
 
-All CLI commands take the exclusive local lock, including reads. This is a deliberate temporary limitation: it makes the first slice auditable, but is not the production concurrency model. Do not use it as a daemon or run it on shared filesystems. A lock failure is an explicit retryable operational error. Do not access the database with external writers.
+Every CLI command, including reads, takes the exclusive lock for each bounded unit of work. Between units it closes the connection and releases the lock, so a long ingestion or correlation run lets other core invocations interleave. Lock contention is retried for up to 5 seconds, then reported as an explicit, retryable `LockTimeout`. Reads still open the live database. That is interim: step 4 replaces them with exported snapshots. Do not run this on shared filesystems, and do not access the database with external writers.
+
+`vulnctl init` creates or migrates the database. Every other command refuses a schema version that does not match the code.
 
 ## Contract semantics
 
