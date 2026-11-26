@@ -18,6 +18,15 @@ python3 -m vulnmon.cli --db "$db" events
 python3 -m unittest discover -s tests -v
 ```
 
+### Ubuntu test container
+
+Non-Ubuntu hosts lack `dpkg` and `python3-apt`, so Debian-matching tests are skipped there. Run the suite in an Ubuntu 24.04 container (system Python 3.12, dpkg, python3-apt) matching CI; podman is preferred, docker is used as a fallback. The checkout is mounted read-only and the container has no network.
+
+```sh
+contrib/dev/test-ubuntu.sh                       # full unittest discovery
+contrib/dev/test-ubuntu.sh python3 -m unittest tests.test_core -v
+```
+
 The synthetic fixture describes an affected fictional Ubuntu package with a provisional P0. A fixed build is not a production-verified remediation. CLI JSON output is a development interface; the outbox is evidence of event creation, not a notification delivery queue with consumer leases yet.
 
 ## Architectural boundaries

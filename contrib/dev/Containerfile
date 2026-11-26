@@ -1,0 +1,12 @@
+# Ubuntu 24.04 test environment matching CI (system Python, dpkg, python3-apt).
+# Development only; not a deployment image.
+FROM docker.io/library/ubuntu:24.04@sha256:562111b88caa79c71391c0c4d3c2114a7d5c35915c20561fd893cb1e07929e6b
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+       python3 python3-apt \
+    && rm -rf /var/lib/apt/lists/*
+# The base image already provides the unprivileged "ubuntu" user (UID 1000).
+USER ubuntu
+WORKDIR /src
+ENV PYTHONPATH=src PYTHONDONTWRITEBYTECODE=1
+CMD ["python3", "-m", "unittest", "discover", "-s", "tests", "-v"]
