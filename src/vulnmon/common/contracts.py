@@ -33,12 +33,22 @@ def _bad_constant(value):
     raise ContractError(f"invalid JSON constant: {value}")
 
 
+def loads(raw, limit=MAX_INPUT_BYTES):
+    """Strict bounded JSON: duplicate keys, NaN/Infinity and deep nesting are rejected."""
+    if len(raw) > limit:
+        raise ContractError("input exceeds size limit")
+    try:
+        return json.loads(raw, object_pairs_hook=_unique, parse_constant=_bad_constant)
+    except RecursionError as exc:
+        raise ContractError("input nesting too deep") from exc
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ContractError(f"invalid JSON: {exc}") from exc
+
+
 def load(path):
     with Path(path).open("rb") as stream:
         raw = stream.read(MAX_INPUT_BYTES + 1)
-    if len(raw) > MAX_INPUT_BYTES:
-        raise ContractError("input exceeds prototype size limit")
-    return json.loads(raw, object_pairs_hook=_unique, parse_constant=_bad_constant)
+    return loads(raw)
 
 
 def fields(obj, required, optional=()):

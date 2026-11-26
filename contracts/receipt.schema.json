@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Delivery receipt payload v1 (kind delivery.receipt)",
+  "description": "Carried as the payload of a spool manifest from notify to core. Accepted only when event_id/attempt_id correlate with an exported attempt; never modifies applicability or priority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "attempt_id", "channel", "outcome", "occurred_at", "provider_reference", "detail"],
+  "properties": {
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "attempt_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "channel": {"type": "string", "minLength": 1, "maxLength": 512},
+    "outcome": {"enum": ["accepted", "delivered", "acknowledged", "failed", "ambiguous"]},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "provider_reference": {"type": ["string", "null"], "minLength": 1, "maxLength": 512},
+    "detail": {"type": ["string", "null"], "maxLength": 1024}
+  }
+}
